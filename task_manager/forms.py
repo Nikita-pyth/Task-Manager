@@ -12,7 +12,7 @@ class WorkerCreationForm(UserCreationForm):
 class TaskForm(forms.ModelForm):
     class Meta:
         model = Task
-        exclude = ["assignees"]
+        fields = "__all__"
         widgets = {
             "deadline": forms.DateTimeInput(attrs={
                 "type": "date",

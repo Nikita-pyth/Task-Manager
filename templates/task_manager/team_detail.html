@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+{% block content %}
+  <h2>Team: {{ object.name }}</h2>
+
+  <p><strong>Members:</strong>
+    {% for worker in object.workers.all %}
+      {{ worker.username }}{% if not forloop.last %}, {% endif %}
+    {% empty %}
+      No members.
+    {% endfor %}
+  </p>
+
+  <p><strong>Projects:</strong>
+    <ul>
+      {% for project in object.projects.all %}
+        <li>
+          <a href="{% url 'task_manager:project-detail' pk=project.pk %}">{{ project.name }}</a>
+        </li>
+      {% empty %}
+        <li>No projects assigned to this team.</li>
+      {% endfor %}
+    </ul>
+  </p>
+
+  {% if request.user in object.workers.all %}
+    <form action="{% url 'task_manager:team-leave' pk=object.pk %}" method="post" style="display: inline;">
+      {% csrf_token %}
+      <button type="submit" class="btn btn-danger">Leave the team</button>
+    </form>
+  {% else %}
+    <form action="{% url 'task_manager:team-join' pk=object.pk %}" method="post" style="display: inline;">
+      {% csrf_token %}
+      <button type="submit" class="btn btn-success">Join the team</button>
+    </form>
+  {% endif %}
+
+  <a href="{% url 'task_manager:team-list' %}" class="btn btn-secondary">Back to list</a>
+{% endblock %}

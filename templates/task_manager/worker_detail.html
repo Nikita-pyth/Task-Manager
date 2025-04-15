@@ -5,6 +5,12 @@
   <p><strong>Email:</strong> {{ worker.email }}</p>
   <p><strong>Team:</strong> {{ worker.team.name }}</p>
   <p><strong>Position:</strong> {{ worker.position.name }}</p>
-  <a href="{% url 'task_manager:worker-update' worker.pk %}">Edit</a> |
-  <a href="{% url 'task_manager:worker-delete' worker.pk %}">Delete</a>
+  <div class="d-flex gap-2 align-items-center">
+    <a class="btn btn-outline-primary" href="{% url 'task_manager:worker-update' worker.pk %}">Edit</a>
+    <form method="post" action="{% url 'task_manager:worker-logout' %}">
+      {% csrf_token %}
+      <button type="submit" class="btn btn-outline-warning">Logout</button>
+    </form>
+    <a class="btn btn-outline-danger" href="{% url 'task_manager:worker-delete' worker.pk %}">Delete</a>
+  </div>
 {% endblock %}

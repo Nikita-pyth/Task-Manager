@@ -37,7 +37,6 @@ class Worker(AbstractUser):
     def __str__(self):
         return f"{self.first_name} {self.last_name} ({self.username})"
 
-
 class Project(models.Model):
     name = models.CharField(max_length=200)
     teams = models.ManyToManyField(Team, related_name="projects")

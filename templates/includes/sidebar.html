@@ -1,17 +1,16 @@
 <ul class="list-group">
-  <li class="list-group-item">
-    <a href="{% url 'task_manager:worker-detail' pk=request.user.pk %}" class="text-decoration-none">Account</a>
-  </li>
+  {% if request.user.is_authenticated %}
+    <li class="list-group-item">
+      <a href="{% url 'task_manager:worker-detail' pk=request.user.pk %}" class="text-decoration-none">Account</a>
+    </li>
+  {% endif %}
   <li class="list-group-item">
     <a href="{% url 'task_manager:index' %}" class="text-decoration-none">Tasks</a>
   </li>
-    <li class="list-group-item">
-    <a href="#" class="text-decoration-none">Projects</a>
+  <li class="list-group-item">
+    <a href="{% url 'task_manager:project-list' %}" class="text-decoration-none">Projects</a>
   </li>
-    <li class="list-group-item">
-    <a href="#" class="text-decoration-none">Teams</a>
-  </li>
-    <li class="list-group-item">
-    <a href="#" class="text-decoration-none">Tags</a>
+  <li class="list-group-item">
+    <a href="{% url 'task_manager:team-list' %}" class="text-decoration-none">Teams</a>
   </li>
 </ul>

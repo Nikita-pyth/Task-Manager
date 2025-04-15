@@ -1,0 +1,6 @@
+{% extends "base.html" %}
+{% block content %}
+  <h1>You have been successfully logged out</h1>
+  <a href="{% url 'task_manager:worker-login'%}" class="btn btn-secondary">Login again</a>
+  <a href="{% url 'task_manager:worker-create'%}" class="btn btn-secondary">Create new User</a>
+{% endblock %}
