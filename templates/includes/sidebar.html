@@ -1,0 +1,17 @@
+<ul class="list-group">
+  <li class="list-group-item">
+    <a href="{% url 'task_manager:worker-detail' pk=request.user.pk %}" class="text-decoration-none">Account</a>
+  </li>
+  <li class="list-group-item">
+    <a href="{% url 'task_manager:index' %}" class="text-decoration-none">Tasks</a>
+  </li>
+    <li class="list-group-item">
+    <a href="#" class="text-decoration-none">Projects</a>
+  </li>
+    <li class="list-group-item">
+    <a href="#" class="text-decoration-none">Teams</a>
+  </li>
+    <li class="list-group-item">
+    <a href="#" class="text-decoration-none">Tags</a>
+  </li>
+</ul>
