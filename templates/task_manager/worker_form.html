@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% load crispy_forms_filters %}
+
+{% block content %}
+  {% if not view.object %}
+    <h2>Create Worker</h2>
+  {% else %}
+    <h2>Update Worker {{ worker.username }}</h2>
+  {% endif %}
+  <form method="post" action="">
+    {% csrf_token %}
+    {{ form|crispy }}
+    <button type="submit" class="btn btn-primary">Submit</button>
+    {% if not view.object %}
+      <p>Already have an account? <a href="{% url 'task_manager:worker-login' %}">Login</a></p>
+    {% endif %}
+  </form>
+{% endblock %}
