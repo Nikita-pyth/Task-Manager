@@ -25,6 +25,7 @@ class Position(models.Model):
 
 class Team(models.Model):
     name = models.CharField(max_length=100)
+    admins = models.ManyToManyField("Worker", related_name="managed_teams")
 
     def __str__(self):
         return self.name

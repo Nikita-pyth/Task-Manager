@@ -10,16 +10,22 @@
     {% endfor %}
   </p>
 
+  <p><strong>Admins:</strong>
+    {% for admin in object.admins.all %}
+      {{ admin.username }}
+    {% endfor %}
+  </p>
+
   <p><strong>Projects:</strong>
-    <ul>
-      {% for project in object.projects.all %}
-        <li>
-          <a href="{% url 'task_manager:project-detail' pk=project.pk %}">{{ project.name }}</a>
-        </li>
-      {% empty %}
-        <li>No projects assigned to this team.</li>
-      {% endfor %}
-    </ul>
+  <ul>
+    {% for project in object.projects.all %}
+      <li>
+        <a href="{% url 'task_manager:project-detail' pk=project.pk %}">{{ project.name }}</a>
+      </li>
+    {% empty %}
+      <li>No projects assigned to this team.</li>
+    {% endfor %}
+  </ul>
   </p>
 
   {% if request.user in object.workers.all %}
@@ -33,6 +39,11 @@
       <button type="submit" class="btn btn-success">Join the team</button>
     </form>
   {% endif %}
+  {% if request.user in object.admins.all %}
+    <a class="btn btn-warning" href="{% url 'task_manager:team-update' pk=object.pk %}">Edit</a>
+    <a class="btn btn-danger" href="{% url 'task_manager:team-delete' pk=object.pk %}">Delete</a>
+  {% endif %}
+
 
   <a href="{% url 'task_manager:team-list' %}" class="btn btn-secondary">Back to list</a>
 {% endblock %}

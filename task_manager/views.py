@@ -1,5 +1,6 @@
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.views import LoginView, LogoutView
+from django.http.response import HttpResponseForbidden
 from django.shortcuts import get_object_or_404, redirect
 from django.urls.base import reverse_lazy, reverse
 from django.views.generic.base import View
@@ -8,7 +9,7 @@ from django.views.generic.edit import (CreateView, DeleteView,
                                        UpdateView)
 from django.views.generic.list import ListView
 
-from task_manager.forms import WorkerCreationForm, TaskForm
+from task_manager.forms import WorkerCreationForm, TaskForm, ProjectForm, ProjectScopedTaskForm
 from task_manager.models import Worker, Task, TaskType, Tag, Team, Project
 
 
@@ -60,9 +61,13 @@ class TaskCreateView(LoginRequiredMixin, CreateView):
 
     def form_valid(self, form):
         response = super().form_valid(form)
-        self.object.assignees.add(self.request.user)
+        self.object.assignees.set([self.request.user])
         return response
 
+
+class TaskDetailView(LoginRequiredMixin, DetailView):
+    model = Task
+    template_name = "task_manager/task_detail.html"
 
 class TaskUpdateView(LoginRequiredMixin, UpdateView):
     model = Task
@@ -91,12 +96,31 @@ class TaskListView(LoginRequiredMixin, ListView):
     def get_queryset(self):
         return Task.objects.filter(assignees=self.request.user)
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        user_tasks = Task.objects.filter(assignees=self.request.user)
+
+        context["personal_tasks"] = user_tasks.filter(project__isnull=True)
+        context["project_tasks"] = user_tasks.filter(project__isnull=False)
+        return context
+
 
 class TaskTypeCreateView(LoginRequiredMixin, CreateView):
     model = TaskType
     fields = "__all__"
     template_name = "task_manager/task_type_form.html"
     success_url = reverse_lazy("task_manager:task-create")
+
+
+class ChangeTaskStatus(LoginRequiredMixin, View):
+    def post(self, request, *args, **kwargs):
+        task = get_object_or_404(Task, pk=kwargs["pk"])
+
+        if request.user in task.assignees.all():
+            task.is_completed = not task.is_completed
+            task.save()
+
+        return redirect("task_manager:index")
 
 
 class TagCreateView(LoginRequiredMixin, CreateView):
@@ -108,10 +132,18 @@ class TagCreateView(LoginRequiredMixin, CreateView):
 
 class CreateTeamView(LoginRequiredMixin, CreateView):
     model = Team
-    fields = "__all__"
+    fields = ["name",]
     template_name = "task_manager/team_form.html"
     success_url = reverse_lazy("task_manager:team-list")
 
+    def form_valid(self, form):
+        response = super().form_valid(form)
+        team = self.object
+        team.admins.add(self.request.user)
+        team.workers.add(self.request.user)
+        self.request.user.team = team
+        self.request.user.save()
+        return response
 
 class TeamListView(LoginRequiredMixin, ListView):
     model = Team
@@ -121,6 +153,24 @@ class TeamListView(LoginRequiredMixin, ListView):
 class TeamDetailView(LoginRequiredMixin, DetailView):
     model = Team
     template_name = "task_manager/team_detail.html"
+
+
+class UpdateTeamView(LoginRequiredMixin, UpdateView):
+    model = Team
+    fields = ["name", "admins"]
+    template_name = "task_manager/team_form.html"
+    success_url = reverse_lazy("task_manager:team-list")
+
+    def dispatch(self, request, *args, **kwargs):
+        team = self.get_object()
+        if request.user not in team.admins.all():
+            return HttpResponseForbidden("You are not allowed to update this team.")
+        return super().dispatch(request, *args, **kwargs)
+
+class TeamDeleteView(LoginRequiredMixin, DeleteView):
+    model = Team
+    template_name = "task_manager/team_confirm_delete.html"
+    success_url = reverse_lazy("task_manager:team-list")
 
 
 class JoinTeamView(LoginRequiredMixin, View):
@@ -146,12 +196,23 @@ class ProjectDetailView(DetailView):
     model = Project
     template_name = "task_manager/project_detail.html"
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        user = self.request.user
+        context["admin_projects"] = Project.objects.filter(teams__admins=user).distinct()
+        print(context["admin_projects"])
+        return context
 
 class ProjectCreateView(CreateView):
     model = Project
-    fields = ["name", "teams"]
+    form_class = ProjectForm
     template_name = "task_manager/project_form.html"
     success_url = reverse_lazy("task_manager:project-list")
+
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs["user"] = self.request.user
+        return kwargs
 
 
 class ProjectUpdateView(UpdateView):
@@ -160,8 +221,50 @@ class ProjectUpdateView(UpdateView):
     template_name = "task_manager/project_form.html"
     success_url = reverse_lazy("task_manager:project-list")
 
+    def dispatch(self, request, *args, **kwargs):
+        project = self.get_object()
+        if request.user not in project.admins.all():
+            return HttpResponseForbidden("You are not allowed to edit this project.")
+        return super().dispatch(request, *args, **kwargs)
+
 
 class ProjectDeleteView(DeleteView):
     model = Project
     template_name = "task_manager/project_confirm_delete.html"
     success_url = reverse_lazy("task_manager:project-list")
+
+
+class ProjectTaskCreateView(LoginRequiredMixin, CreateView):
+    model = Task
+    form_class = ProjectScopedTaskForm
+    template_name = "task_manager/task_form.html"
+
+    def get_success_url(self):
+        return reverse_lazy("task_manager:project-detail", kwargs={"pk": self.project.pk})
+
+    def dispatch(self, request, *args, **kwargs):
+        self.project = get_object_or_404(Project, pk=self.kwargs["pk"])
+        user_admin_teams = Team.objects.filter(admins=request.user)
+        if not self.project.teams.filter(pk__in=user_admin_teams).exists():
+            return HttpResponseForbidden("You are not allowed to create tasks for this project.")
+        return super().dispatch(request, *args, **kwargs)
+
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+
+        teams_admin = Team.objects.filter(
+            admins=self.request.user
+        ).distinct()
+
+        team_members = Worker.objects.filter(team__in=teams_admin).distinct()
+
+        kwargs["team_members"] = team_members
+        return kwargs
+
+    def form_valid(self, form):
+        form.instance.project = self.project
+        response = super().form_valid(form)
+        self.object.assignees.set([self.request.user])
+        return response
+
+
