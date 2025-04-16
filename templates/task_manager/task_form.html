@@ -19,6 +19,8 @@
       <a href="{% url 'task_manager:tag-create' %}" class="btn btn-link">+ Create new tag</a>
       <br>
     {% endif %}
+    <br>
     <button type="submit" class="btn btn-primary">Save</button>
   </form>
+  <button type="button" class="btn btn-secondary ms-2" onclick="history.back()">Cancel</button>
 {% endblock %}

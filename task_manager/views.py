@@ -120,7 +120,7 @@ class ChangeTaskStatus(LoginRequiredMixin, View):
             task.is_completed = not task.is_completed
             task.save()
 
-        return redirect("task_manager:index")
+        return redirect(request.META.get("HTTP_REFERER", "task_manager:index"))
 
 
 class TagCreateView(LoginRequiredMixin, CreateView):
@@ -187,12 +187,12 @@ class LeaveTeamView(LoginRequiredMixin, View):
         return redirect("task_manager:team-detail", pk=team.pk)
 
 
-class ProjectListView(ListView):
+class ProjectListView(LoginRequiredMixin,ListView):
     model = Project
     template_name = "task_manager/project_list.html"
 
 
-class ProjectDetailView(DetailView):
+class ProjectDetailView(LoginRequiredMixin,DetailView):
     model = Project
     template_name = "task_manager/project_detail.html"
 
@@ -203,7 +203,7 @@ class ProjectDetailView(DetailView):
         print(context["admin_projects"])
         return context
 
-class ProjectCreateView(CreateView):
+class ProjectCreateView(LoginRequiredMixin,CreateView):
     model = Project
     form_class = ProjectForm
     template_name = "task_manager/project_form.html"
@@ -215,7 +215,7 @@ class ProjectCreateView(CreateView):
         return kwargs
 
 
-class ProjectUpdateView(UpdateView):
+class ProjectUpdateView(LoginRequiredMixin,UpdateView):
     model = Project
     fields = ["name", "teams"]
     template_name = "task_manager/project_form.html"
@@ -228,7 +228,7 @@ class ProjectUpdateView(UpdateView):
         return super().dispatch(request, *args, **kwargs)
 
 
-class ProjectDeleteView(DeleteView):
+class ProjectDeleteView(LoginRequiredMixin,DeleteView):
     model = Project
     template_name = "task_manager/project_confirm_delete.html"
     success_url = reverse_lazy("task_manager:project-list")
