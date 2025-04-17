@@ -27,7 +27,6 @@ class ProjectDetailView(LoginRequiredMixin, DetailView):
         context = super().get_context_data(**kwargs)
         user = self.request.user
         context["admin_projects"] = Project.objects.filter(teams__admins=user).distinct()
-        print(context["admin_projects"])
         return context
 
 
@@ -51,8 +50,9 @@ class ProjectUpdateView(LoginRequiredMixin, UpdateView):
 
     def dispatch(self, request, *args, **kwargs):
         project = self.get_object()
-        if request.user not in project.admins.all():
-            return HttpResponseForbidden("You are not allowed to edit this project.")
+        for team in project.teams.all():
+            if request.user not in team.admins.all():
+                return HttpResponseForbidden("You are not allowed to edit this project.")
         return super().dispatch(request, *args, **kwargs)
 
 
