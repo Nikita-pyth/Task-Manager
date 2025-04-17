@@ -32,6 +32,7 @@ urlpatterns = [
     path("projects/<int:pk>/create_task/", task_manager.views.ProjectTaskCreateView.as_view(),
          name="project-task-create"),
     path("tasks/<int:pk>/toggle_status/", task_manager.views.ChangeTaskStatus.as_view(), name="task-toggle-status"),
+    path("position/create/", task_manager.views.PositionCreateView.as_view(), name="position-create"),
 
 ]
 

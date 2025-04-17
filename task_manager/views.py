@@ -10,7 +10,7 @@ from django.views.generic.edit import (CreateView, DeleteView,
 from django.views.generic.list import ListView
 
 from task_manager.forms import WorkerCreationForm, TaskForm, ProjectForm, ProjectScopedTaskForm
-from task_manager.models import Worker, Task, TaskType, Tag, Team, Project
+from task_manager.models import Worker, Task, TaskType, Tag, Team, Project, Position
 
 
 class WorkerDetailView(LoginRequiredMixin, DetailView):
@@ -40,7 +40,7 @@ class WorkerLogoutView(LogoutView):
 
 class WorkerUpdateView(LoginRequiredMixin, UpdateView):
     model = Worker
-    fields = ("first_name", "last_name", "email", "position", "team")
+    fields = ("first_name", "last_name", "email", "team", "position")
     template_name = "task_manager/worker_form.html"
 
     def get_success_url(self):
@@ -268,3 +268,10 @@ class ProjectTaskCreateView(LoginRequiredMixin, CreateView):
         return response
 
 
+class PositionCreateView(CreateView):
+    model = Position
+    fields = "__all__"
+    template_name = "task_manager/position_form.html"
+
+    def get_success_url(self):
+        return reverse_lazy("task_manager:worker-update", kwargs={"pk": self.request.user.pk})
