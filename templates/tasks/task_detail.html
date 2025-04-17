@@ -1,58 +1,69 @@
 {% extends "base.html" %}
 
 {% block content %}
-  <h2>{{ object.name }}</h2>
+  <div class="card shadow-sm">
+    <div class="card-header bg-body-secondary">
+      <h2 class="mb-0 h5">{{ object.name }}</h2>
+    </div>
+    <div class="card-body">
 
-  <p><strong>Description:</strong> {{ object.description }}</p>
+      <p><strong>Description:</strong> {{ object.description }}</p>
+      <p><strong>Deadline:</strong> {{ object.deadline|date:"Y-m-d" }}</p>
+      <p><strong>Completed:</strong>
+        {% if object.is_completed %}✅{% else %}❌{% endif %}
+      </p>
+      <p><strong>Priority:</strong> {{ object.get_priority_display }}</p>
 
-  <p><strong>Deadline:</strong> {{ object.deadline|date:"Y-m-d" }}</p>
+      <p><strong>Type:</strong>
+        {% if object.type %}
+          <span class="badge bg-info text-dark">{{ object.type.name }}</span>
+        {% else %}
+          <span class="text-muted">—</span>
+        {% endif %}
+      </p>
 
-  <p><strong>Completed:</strong>
-    {% if object.is_completed %}✅{% else %}❌{% endif %}
-  </p>
+      <p><strong>Tags:</strong></p>
+      <div class="mb-3">
+        {% for tag in object.tags.all %}
+          <span class="badge bg-secondary me-1 mb-1">🏷️ {{ tag.name }}</span>
+        {% empty %}
+          <span class="text-muted">—</span>
+        {% endfor %}
+      </div>
 
-  <p><strong>Priority:</strong> {{ object.get_priority_display }}</p>
+      {% if object.project %}
+        <p><strong>Project:</strong>
+          <a href="{% url 'projects:detail' pk=object.project.pk %}">{{ object.project.name }}</a>
+        </p>
+      {% endif %}
 
-  <p><strong>Type:</strong>
-    {% if object.type %}
-      {{ object.type.name }}
-    {% else %}
-      <span class="text-muted">—</span>
-    {% endif %}
-  </p>
+      <p><strong>Assigned to:</strong>
+        {% if object.assignees.all %}
+          {% for worker in object.assignees.all %}
+            <span class="badge bg-primary me-1">{{ worker.username }}</span>
+          {% endfor %}
+        {% else %}
+          <span class="text-muted">—</span>
+        {% endif %}
+      </p>
 
-  <p><strong>Tags:</strong>
-    {% for tag in object.tags.all %}
-      <br><span class="badge bg-secondary me-1">🏷️ {{ tag.name }}</span>
-    {% empty %}
-      <span class="text-muted">—</span>
-    {% endfor %}
-  </p>
-  {% if task.project %}
-    <p><strong>Project:</strong>
-      <a href="{% url 'projects:detail' pk=object.project.pk %}">
-        {{ object.project.name }}
-      </a>
-    </p>
-  {% endif %}
+      <div class="d-flex flex-wrap gap-2 mt-4">
+        <form method="post" action="{% url 'tasks:toggle-status' pk=object.pk %}">
+          {% csrf_token %}
+          <button type="submit"
+                  class="btn btn-sm {% if object.is_completed %}btn-secondary{% else %}btn-success{% endif %}">
+            {% if object.is_completed %}Mark as Incomplete{% else %}Mark as Complete{% endif %}
+          </button>
+        </form>
 
-  <p><strong>Assigned to:</strong>
-    {% for worker in object.assignees.all %}
-      {{ worker.username }}{% if not forloop.last %}, {% endif %}
-    {% endfor %}
-  </p>
+        {% if not object.project %}
+          <a href="{% url 'tasks:update' object.pk %}" class="btn btn-warning btn-sm">Edit</a>
+          <a href="{% url 'tasks:delete' object.pk %}" class="btn btn-danger btn-sm">Delete</a>
+        {% endif %}
 
-  <form method="post" action="{% url 'tasks:toggle-status' pk=task.pk %}"
-        style="display: inline;">
-    {% csrf_token %}
-    <button type="submit"
-            class="btn btn-sm {% if task.is_completed %}btn-secondary{% else %}btn-success{% endif %}">
-      {% if task.is_completed %}Mark as Incomplete{% else %}Mark as Complete{% endif %}
-    </button>
-  </form>
-  {% if not task.project %}
-    <a href="{% url 'tasks:update' object.pk %}" class="btn btn-warning me-2">Edit</a>
-    <a href="{% url 'tasks:delete' object.pk %}" class="btn btn-danger">Delete</a>
-  {% endif %}
-  <a href="{% url 'tasks:index' %}" class="btn btn-secondary">Back</a>
+        <a href="{% url 'tasks:index' %}" class="btn btn-secondary btn-sm">Back</a>
+      </div>
+
+    </div>
+  </div>
 {% endblock %}

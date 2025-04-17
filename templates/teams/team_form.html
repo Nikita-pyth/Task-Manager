@@ -2,17 +2,38 @@
 {% load crispy_forms_filters %}
 
 {% block content %}
-  {{ object|yesno:"Update Team,Create Team" }}
-  <form method="post">
-    {% csrf_token %}
-    {{ form.name|as_crispy_field  }}
-    {% if team %}
-      {{ form.admins|as_crispy_field  }}
-    {% else %}
-      <p>Note that now {{ request.user.username }} will be the admin of this team. You can add more admins later.</p>
-      <p class="text text-danger">This will change user's team</p>
-    {% endif %}
-    <button type="submit" class="btn btn-primary">Save</button>
-    <a href="{% url 'teams:detail' pk=team.pk%}" class="btn btn-secondary">Cancel</a>
-  </form>
+<div class="card shadow-sm">
+  <div class="card-header bg-body-secondary">
+    <h2 class="mb-0 h5">
+      {% if team %}Update Team{% else %}Create Team{% endif %}
+    </h2>
+  </div>
+  <div class="card-body">
+    <form method="post">
+      {% csrf_token %}
+      {{ form.name|as_crispy_field }}
+
+      {% if team %}
+        {{ form.admins|as_crispy_field }}
+      {% else %}
+        <div class="alert alert-info">
+          Note: <strong>{{ request.user.username }}</strong> will be the initial admin of this team. You can add more admins later.
+        </div>
+        <div class="alert alert-danger">
+          ⚠️ Creating this team will change your current team.
+        </div>
+      {% endif %}
+
+      <div class="d-flex flex-wrap gap-2 mt-3">
+        <button type="submit" class="btn btn-primary">Save</button>
+
+        {% if team %}
+          <a href="{% url 'teams:detail' pk=team.pk %}" class="btn btn-secondary">Cancel</a>
+        {% else %}
+          <a href="{% url 'teams:list' %}" class="btn btn-secondary">Cancel</a>
+        {% endif %}
+      </div>
+    </form>
+  </div>
+</div>
 {% endblock %}

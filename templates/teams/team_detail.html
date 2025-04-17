@@ -1,50 +1,60 @@
 {% extends "base.html" %}
+
 {% block content %}
-  <h2>Team: {{ object.name }}</h2>
+<div class="card shadow-sm mb-4">
+  <div class="card-header bg-body-secondary">
+    <h2 class="mb-0 h5">Team: {{ object.name }}</h2>
+  </div>
+  <div class="card-body">
 
-  <p><strong>Members:</strong>
-    {% for worker in object.workers.all %}
-      {{ worker.username }}{% if not forloop.last %}, {% endif %}
-    {% empty %}
-      No members.
-    {% endfor %}
-  </p>
+    <p><strong>Members:</strong>
+      {% for worker in object.workers.all %}
+        <span class="badge bg-primary me-1">{{ worker.username }}</span>
+      {% empty %}
+        <span class="text-muted">No members.</span>
+      {% endfor %}
+    </p>
 
-  <p><strong>Admins:</strong>
-    {% for admin in object.admins.all %}
-      {{ admin.username }}
-    {% endfor %}
-  </p>
+    <p><strong>Admins:</strong>
+      {% for admin in object.admins.all %}
+        <span class="badge bg-warning text-dark me-1">{{ admin.username }}</span>
+      {% empty %}
+        <span class="text-muted">No admins.</span>
+      {% endfor %}
+    </p>
 
-  <p><strong>Projects:</strong>
-  <ul>
-    {% for project in object.projects.all %}
-      <li>
-        <a href="{% url 'teams:detail' pk=project.pk %}">{{ project.name }}</a>
-      </li>
-    {% empty %}
-      <li>No projects assigned to this team.</li>
-    {% endfor %}
-  </ul>
+    <p><strong>Projects:</strong></p>
+    <ul class="list-group mb-3">
+      {% for project in object.projects.all %}
+        <li class="list-group-item">
+          <a href="{% url 'projects:detail' pk=project.pk %}">{{ project.name }}</a>
+        </li>
+      {% empty %}
+        <li class="list-group-item text-muted">No projects assigned to this team.</li>
+      {% endfor %}
+    </ul>
 
-  {% if request.user in object.workers.all %}
-    <form action="{% url 'teams:leave' pk=object.pk %}" method="post" style="display: inline;">
-      {% csrf_token %}
-      <button type="submit" class="btn btn-danger">Leave the team</button>
-    </form>
-  {% else %}
-    <form action="{% url 'teams:join' pk=object.pk %}" method="post" style="display: inline;">
-      {% csrf_token %}
-      <button type="submit" class="btn btn-success">Join the team</button>
-    </form>
-  {% endif %}
-  {% if request.user in object.admins.all %}
-    <a class="btn btn-warning" href="{% url 'teams:update' pk=object.pk %}">Edit</a>
-    <a class="btn btn-danger" href="{% url 'teams:delete' pk=object.pk %}">Delete</a>
-  {% endif %}
+    <div class="d-flex flex-wrap gap-2">
+      {% if request.user in object.workers.all %}
+        <form action="{% url 'teams:leave' pk=object.pk %}" method="post">
+          {% csrf_token %}
+          <button type="submit" class="btn btn-outline-danger">Leave the team</button>
+        </form>
+      {% else %}
+        <form action="{% url 'teams:join' pk=object.pk %}" method="post">
+          {% csrf_token %}
+          <button type="submit" class="btn btn-outline-success">Join the team</button>
+        </form>
+      {% endif %}
 
+      {% if request.user in object.admins.all %}
+        <a class="btn btn-outline-warning" href="{% url 'teams:update' pk=object.pk %}">Edit</a>
+        <a class="btn btn-outline-danger" href="{% url 'teams:delete' pk=object.pk %}">Delete</a>
+      {% endif %}
 
-  <a href="{% url 'teams:list' %}" class="btn btn-secondary">Back to list</a>
+      <a href="{% url 'teams:list' %}" class="btn btn-secondary ms-auto">Back to list</a>
+    </div>
+
+  </div>
+</div>
 {% endblock %}
-
-

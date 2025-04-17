@@ -91,6 +91,5 @@ class ProjectTaskCreateView(LoginRequiredMixin, CreateView):
 
     def form_valid(self, form):
         form.instance.project = self.project
-        response = super().form_valid(form)
-        self.object.assignees.set([self.request.user])
-        return response
+        return super().form_valid(form)
+
