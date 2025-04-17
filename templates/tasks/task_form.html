@@ -1,0 +1,67 @@
+{#{% extends "base.html" %}#}
+{#{% load crispy_forms_filters %}#}
+{##}
+{#{% block content %}#}
+{#  <h2>{% if object %}Edit Task{% else %}Create Task{% endif %}</h2>#}
+{#  <form method="post">#}
+{#    {% csrf_token %}#}
+{#    {{ form.name|as_crispy_field }}#}
+{#    {{ form.description|as_crispy_field }}#}
+{#    {{ form.deadline|as_crispy_field }}#}
+{#    {{ form.is_completed|as_crispy_field }}#}
+{#    {{ form.priority|as_crispy_field }}#}
+{##}
+{#    {{ form.type|as_crispy_field }}#}
+{#    <a href="{% url 'tasks:tasktype-create' %}" class="btn btn-link">+ Create new task type</a>#}
+{#    {% if request.resolver_match.view_name == "projects:create-task" %}#}
+{#      {{ form.assignees|as_crispy_field }}#}
+{#      {{ form.tags|as_crispy_field }}#}
+{#      <a href="{% url 'tasks:tag-create' %}" class="btn btn-link">+ Create new tag</a>#}
+{#      <br>#}
+{#    {% endif %}#}
+{#    <br>#}
+{#    <button type="submit" class="btn btn-primary">Save</button>#}
+{#  </form>#}
+{#  <button type="button" class="btn btn-secondary ms-2" onclick="history.back()">Cancel</button>#}
+{#{% endblock %}#}
+
+
+{% extends "base.html" %}
+{% load crispy_forms_filters %}
+
+{% block content %}
+  <div class="card shadow-sm">
+    <div class="card-header bg-body-secondary">
+      <h2 class="mb-0 h5">{% if object %}Edit Task{% else %}Create Task{% endif %}</h2>
+    </div>
+    <div class="card-body">
+      <form method="post">
+        {% csrf_token %}
+        {{ form.name|as_crispy_field }}
+        {{ form.description|as_crispy_field }}
+        {{ form.deadline|as_crispy_field }}
+        {{ form.is_completed|as_crispy_field }}
+        {{ form.priority|as_crispy_field }}
+        {{ form.tags|as_crispy_field }}
+        <a class="btn btn-sm btn-outline-secondary" href="{% url 'tasks:tag-create' %}?next={{ request.get_full_path }}">+ Create Tag</a>
+
+
+        {{ form.type|as_crispy_field }}
+
+        <div class="mb-3">
+          <a href="{% url 'tasks:tasktype-create' %}" class="btn btn-sm btn-outline-secondary">+ Create new task
+            type</a>
+        </div>
+
+        {% if request.resolver_match.view_name == "projects:create-task" %}
+          {{ form.assignees|as_crispy_field }}
+        {% endif %}
+
+        <div class="mt-4 d-flex gap-2">
+          <button type="submit" class="btn btn-primary">Save</button>
+          <button type="button" class="btn btn-secondary" onclick="history.back()">Cancel</button>
+        </div>
+      </form>
+    </div>
+  </div>
+{% endblock %}

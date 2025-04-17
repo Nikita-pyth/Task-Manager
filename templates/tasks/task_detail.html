@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+
+{% block content %}
+  <h2>{{ object.name }}</h2>
+
+  <p><strong>Description:</strong> {{ object.description }}</p>
+
+  <p><strong>Deadline:</strong> {{ object.deadline|date:"Y-m-d" }}</p>
+
+  <p><strong>Completed:</strong>
+    {% if object.is_completed %}✅{% else %}❌{% endif %}
+  </p>
+
+  <p><strong>Priority:</strong> {{ object.get_priority_display }}</p>
+
+  <p><strong>Type:</strong>
+    {% if object.type %}
+      {{ object.type.name }}
+    {% else %}
+      <span class="text-muted">—</span>
+    {% endif %}
+  </p>
+
+  <p><strong>Tags:</strong>
+    {% for tag in object.tags.all %}
+      <br><span class="badge bg-secondary me-1">🏷️ {{ tag.name }}</span>
+    {% empty %}
+      <span class="text-muted">—</span>
+    {% endfor %}
+  </p>
+  {% if task.project %}
+    <p><strong>Project:</strong>
+      <a href="{% url 'projects:detail' pk=object.project.pk %}">
+        {{ object.project.name }}
+      </a>
+    </p>
+  {% endif %}
+
+  <p><strong>Assigned to:</strong>
+    {% for worker in object.assignees.all %}
+      {{ worker.username }}{% if not forloop.last %}, {% endif %}
+    {% endfor %}
+  </p>
+
+  <form method="post" action="{% url 'tasks:toggle-status' pk=task.pk %}"
+        style="display: inline;">
+    {% csrf_token %}
+    <button type="submit"
+            class="btn btn-sm {% if task.is_completed %}btn-secondary{% else %}btn-success{% endif %}">
+      {% if task.is_completed %}Mark as Incomplete{% else %}Mark as Complete{% endif %}
+    </button>
+  </form>
+  {% if not task.project %}
+    <a href="{% url 'tasks:update' object.pk %}" class="btn btn-warning me-2">Edit</a>
+    <a href="{% url 'tasks:delete' object.pk %}" class="btn btn-danger">Delete</a>
+  {% endif %}
+  <a href="{% url 'tasks:index' %}" class="btn btn-secondary">Back</a>
+{% endblock %}

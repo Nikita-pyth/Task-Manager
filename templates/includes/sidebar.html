@@ -1,16 +1,16 @@
-<ul class="list-group">
+<ul class="list-group list-group-flush">
   {% if request.user.is_authenticated %}
     <li class="list-group-item">
-      <a href="{% url 'task_manager:worker-detail' pk=request.user.pk %}" class="text-decoration-none">Account</a>
+      <a href="{% url 'accounts:detail' pk=request.user.pk %}" class="nav-link px-2 link-dark">👤 Account</a>
     </li>
   {% endif %}
   <li class="list-group-item">
-    <a href="{% url 'task_manager:index' %}" class="text-decoration-none">Tasks</a>
+    <a href="{% url 'tasks:index' %}" class="nav-link px-2 link-dark">📋 Tasks</a>
   </li>
   <li class="list-group-item">
-    <a href="{% url 'task_manager:project-list' %}" class="text-decoration-none">Projects</a>
+    <a href="{% url 'projects:list' %}" class="nav-link px-2 link-dark">📁 Projects</a>
   </li>
   <li class="list-group-item">
-    <a href="{% url 'task_manager:team-list' %}" class="text-decoration-none">Teams</a>
+    <a href="{% url 'teams:list' %}" class="nav-link px-2 link-dark">👥 Teams</a>
   </li>
 </ul>

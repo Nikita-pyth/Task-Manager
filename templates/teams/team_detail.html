@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+{% block content %}
+  <h2>Team: {{ object.name }}</h2>
+
+  <p><strong>Members:</strong>
+    {% for worker in object.workers.all %}
+      {{ worker.username }}{% if not forloop.last %}, {% endif %}
+    {% empty %}
+      No members.
+    {% endfor %}
+  </p>
+
+  <p><strong>Admins:</strong>
+    {% for admin in object.admins.all %}
+      {{ admin.username }}
+    {% endfor %}
+  </p>
+
+  <p><strong>Projects:</strong>
+  <ul>
+    {% for project in object.projects.all %}
+      <li>
+        <a href="{% url 'teams:detail' pk=project.pk %}">{{ project.name }}</a>
+      </li>
+    {% empty %}
+      <li>No projects assigned to this team.</li>
+    {% endfor %}
+  </ul>
+
+  {% if request.user in object.workers.all %}
+    <form action="{% url 'teams:leave' pk=object.pk %}" method="post" style="display: inline;">
+      {% csrf_token %}
+      <button type="submit" class="btn btn-danger">Leave the team</button>
+    </form>
+  {% else %}
+    <form action="{% url 'teams:join' pk=object.pk %}" method="post" style="display: inline;">
+      {% csrf_token %}
+      <button type="submit" class="btn btn-success">Join the team</button>
+    </form>
+  {% endif %}
+  {% if request.user in object.admins.all %}
+    <a class="btn btn-warning" href="{% url 'teams:update' pk=object.pk %}">Edit</a>
+    <a class="btn btn-danger" href="{% url 'teams:delete' pk=object.pk %}">Delete</a>
+  {% endif %}
+
+
+  <a href="{% url 'teams:list' %}" class="btn btn-secondary">Back to list</a>
+{% endblock %}
+
+
