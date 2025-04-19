@@ -12,7 +12,7 @@ A web-based task management system designed for collaborative project tracking. 
 ## Tech Stack
 
 - **Backend**: Python, Django  
-- **Frontend**: Django Template Engine  
+- **Frontend**: Django Template Engine, Bootstrap5
 - **Auth**: Session-based authentication  
 
 ## Setup Instructions
