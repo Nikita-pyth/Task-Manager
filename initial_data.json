@@ -18,7 +18,9 @@
     "pk": 1,
     "fields": {
       "name": "Backend Team",
-      "admins": [1]
+      "admins": [
+        1
+      ]
     }
   },
   {
@@ -26,7 +28,9 @@
     "pk": 2,
     "fields": {
       "name": "Frontend Team",
-      "admins": [2]
+      "admins": [
+        2
+      ]
     }
   },
   {
@@ -38,6 +42,21 @@
       "last_name": "Doe",
       "password": "unsafe_password@2",
       "is_superuser": true,
+      "is_staff": true,
+      "is_active": true,
+      "position": 1,
+      "team": 1
+    }
+  },
+  {
+    "model": "accounts.worker",
+    "pk": 3,
+    "fields": {
+      "username": "user",
+      "first_name": "User",
+      "last_name": "User",
+      "password": "user12345",
+      "is_superuser": false,
       "is_staff": true,
       "is_active": true,
       "position": 1,
@@ -64,7 +83,10 @@
     "pk": 1,
     "fields": {
       "name": "Website Redesign",
-      "teams": [1, 2]
+      "teams": [
+        1,
+        2
+      ]
     }
   },
   {
@@ -72,7 +94,9 @@
     "pk": 2,
     "fields": {
       "name": "API Development",
-      "teams": [1]
+      "teams": [
+        1
+      ]
     }
   },
   {
@@ -114,8 +138,12 @@
       "priority": "high",
       "type": 1,
       "project": 1,
-      "assignees": [1],
-      "tags": [1]
+      "assignees": [
+        1
+      ],
+      "tags": [
+        1
+      ]
     }
   },
   {
@@ -129,8 +157,12 @@
       "priority": "medium",
       "type": 2,
       "project": 1,
-      "assignees": [2],
-      "tags": [2]
+      "assignees": [
+        2
+      ],
+      "tags": [
+        2
+      ]
     }
   }
 ]
