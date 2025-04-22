@@ -1,0 +1,7 @@
+@media (max-width: 767.98px) {
+  .sidebar-custom {
+    min-height: auto !important;
+    max-height: 230px;
+    overflow-y: auto;
+  }
+}

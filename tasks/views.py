@@ -8,12 +8,12 @@ from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from django.views.generic.list import ListView
 
 from tasks.models import Task, TaskType, Tag
-from tasks.forms import TaskForm
+from tasks.forms import TaskCreateForm, TaskUpdateForm
 
 
 class TaskCreateView(LoginRequiredMixin, CreateView):
     model = Task
-    form_class = TaskForm
+    form_class = TaskCreateForm
     template_name = "tasks/task_form.html"
     success_url = reverse_lazy("tasks:index")
 
@@ -30,7 +30,7 @@ class TaskDetailView(LoginRequiredMixin, DetailView):
 
 class TaskUpdateView(LoginRequiredMixin, UpdateView):
     model = Task
-    form_class = TaskForm
+    form_class = TaskUpdateForm
     template_name = "tasks/task_form.html"
     success_url = reverse_lazy("tasks:index")
 

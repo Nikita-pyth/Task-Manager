@@ -1,31 +1,3 @@
-{#{% extends "base.html" %}#}
-{#{% load crispy_forms_filters %}#}
-{##}
-{#{% block content %}#}
-{#  <h2>{% if object %}Edit Task{% else %}Create Task{% endif %}</h2>#}
-{#  <form method="post">#}
-{#    {% csrf_token %}#}
-{#    {{ form.name|as_crispy_field }}#}
-{#    {{ form.description|as_crispy_field }}#}
-{#    {{ form.deadline|as_crispy_field }}#}
-{#    {{ form.is_completed|as_crispy_field }}#}
-{#    {{ form.priority|as_crispy_field }}#}
-{##}
-{#    {{ form.type|as_crispy_field }}#}
-{#    <a href="{% url 'tasks:tasktype-create' %}" class="btn btn-link">+ Create new task type</a>#}
-{#    {% if request.resolver_match.view_name == "projects:create-task" %}#}
-{#      {{ form.assignees|as_crispy_field }}#}
-{#      {{ form.tags|as_crispy_field }}#}
-{#      <a href="{% url 'tasks:tag-create' %}" class="btn btn-link">+ Create new tag</a>#}
-{#      <br>#}
-{#    {% endif %}#}
-{#    <br>#}
-{#    <button type="submit" class="btn btn-primary">Save</button>#}
-{#  </form>#}
-{#  <button type="button" class="btn btn-secondary ms-2" onclick="history.back()">Cancel</button>#}
-{#{% endblock %}#}
-
-
 {% extends "base.html" %}
 {% load crispy_forms_filters %}
 
@@ -40,10 +12,13 @@
         {{ form.name|as_crispy_field }}
         {{ form.description|as_crispy_field }}
         {{ form.deadline|as_crispy_field }}
-        {{ form.is_completed|as_crispy_field }}
+        {% if  object %}
+          {{ form.is_completed|as_crispy_field }}
+        {% endif %}
         {{ form.priority|as_crispy_field }}
         {{ form.tags|as_crispy_field }}
-        <a class="btn btn-sm btn-outline-secondary" href="{% url 'tasks:tag-create' %}?next={{ request.get_full_path }}">+ Create Tag</a>
+        <a class="btn btn-sm btn-outline-secondary"
+           href="{% url 'tasks:tag-create' %}?next={{ request.get_full_path }}">+ Create Tag</a>
 
 
         {{ form.type|as_crispy_field }}
