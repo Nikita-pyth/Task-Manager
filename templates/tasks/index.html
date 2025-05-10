@@ -1,0 +1,119 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+  <div class="card mb-5">
+    <div class="card-header bg-light border-bottom text-dark">
+      <h2 class="mb-0 h5">My Personal Tasks</h2>
+    </div>
+    <div class="card-body">
+
+      {% if personal_tasks %}
+        <table class="table table-striped table-hover table-bordered align-middle">
+          <thead class="table-light">
+          <tr>
+            <th>Name</th>
+            <th>Deadline</th>
+            <th>Completed</th>
+            <th>Tags</th>
+            <th>Actions</th>
+          </tr>
+          </thead>
+          <tbody>
+          {% for task in personal_tasks %}
+            <tr class="{% if task.is_completed %}table-success{% endif %}">
+              <td><a href="{% url 'tasks:detail' pk=task.pk %}">{{ task.name }}</a></td>
+              <td>{{ task.deadline|date:"Y-m-d" }}</td>
+              <td>{% if task.is_completed %}✅{% else %}❌{% endif %}</td>
+              <td>
+                {% for tag in task.tags.all %}
+                  <br><span class="badge bg-secondary me-1">🏷️ {{ tag.name }}</span>
+                {% empty %}
+                  <span class="text-muted">—</span>
+                {% endfor %}
+              </td>
+              <td>
+                <div class="d-flex flex-wrap gap-2">
+                  <a href="{% url 'tasks:update' task.pk %}" class="btn btn-sm btn-warning">
+                    <i class="bi bi-pencil-fill"></i> Edit
+                  </a>
+                  <a href="{% url 'tasks:delete' task.pk %}" class="btn btn-sm btn-danger">
+                    <i class="bi bi-trash-fill"></i> Delete
+                  </a>
+                  <form method="post" action="{% url 'tasks:toggle-status' pk=task.pk %}">
+                    {% csrf_token %}
+                    <button type="submit"
+                            class="btn btn-sm {% if task.is_completed %}btn-secondary{% else %}btn-success{% endif %}">
+                      {% if task.is_completed %}
+                        <i class="bi bi-arrow-counterclockwise"></i> Mark as Incomplete
+                      {% else %}
+                        <i class="bi bi-check2-circle"></i> Mark as Complete
+                      {% endif %}
+                    </button>
+                  </form>
+                </div>
+              </td>
+            </tr>
+          {% endfor %}
+          </tbody>
+        </table>
+      {% else %}
+        <p>No Personal tasks created.</p>
+      {% endif %}
+
+      <a href="{% url 'tasks:create' %}" class="btn btn-primary mt-3">+ Create New Personal Task</a>
+    </div>
+  </div>
+
+
+  <div class="card">
+    <div class="card-header bg-light text-dark">
+      <h2 class="mb-0 h5">My Project Tasks</h2>
+    </div>
+    <div class="card-body">
+
+      {% if project_tasks %}
+        <table class="table table-striped table-hover table-bordered align-middle">
+          <thead class="table-light">
+          <tr>
+            <th>Name</th>
+            <th>Deadline</th>
+            <th>Completed</th>
+            <th>Project</th>
+            <th>Actions</th>
+          </tr>
+          </thead>
+          <tbody>
+          {% for task in project_tasks %}
+            <tr class="{% if task.is_completed %}table-success{% endif %}">
+              <td><a href="{% url 'tasks:detail' pk=task.pk %}">{{ task.name }}</a></td>
+              <td>{{ task.deadline|date:"Y-m-d" }}</td>
+              <td>{% if task.is_completed %}✅{% else %}❌{% endif %}</td>
+              <td>{{ task.project }}</td>
+              <td>
+                <div class="d-flex flex-wrap gap-2">
+                  <form method="post" action="{% url 'tasks:toggle-status' pk=task.pk %}">
+                    {% csrf_token %}
+                    <button type="submit"
+                            class="btn btn-sm {% if task.is_completed %}btn-secondary{% else %}btn-success{% endif %}">
+                      {% if task.is_completed %}
+                        <i class="bi bi-arrow-counterclockwise"></i> Mark as Incomplete
+                      {% else %}
+                        <i class="bi bi-check2-circle"></i> Mark as Complete
+                      {% endif %}
+                    </button>
+                  </form>
+                </div>
+              </td>
+            </tr>
+          {% endfor %}
+          </tbody>
+        </table>
+      {% else %}
+        <p>No Project tasks assigned to you.</p>
+      {% endif %}
+
+    </div>
+  </div>
+
+{% endblock %}

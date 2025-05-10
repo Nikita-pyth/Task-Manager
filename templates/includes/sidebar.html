@@ -1,0 +1,16 @@
+<ul class="list-group list-group-flush">
+  {% if request.user.is_authenticated %}
+    <li class="list-group-item">
+      <a href="{% url 'accounts:detail' pk=request.user.pk %}" class="nav-link px-2 link-dark">👤 Account</a>
+    </li>
+  {% endif %}
+  <li class="list-group-item">
+    <a href="{% url 'tasks:index' %}" class="nav-link px-2 link-dark">📋 Tasks</a>
+  </li>
+  <li class="list-group-item">
+    <a href="{% url 'projects:list' %}" class="nav-link px-2 link-dark">📁 Projects</a>
+  </li>
+  <li class="list-group-item">
+    <a href="{% url 'teams:list' %}" class="nav-link px-2 link-dark">👥 Teams</a>
+  </li>
+</ul>

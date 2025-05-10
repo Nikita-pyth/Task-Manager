@@ -1,0 +1,168 @@
+[
+  {
+    "model": "positions.position",
+    "pk": 1,
+    "fields": {
+      "name": "Developer"
+    }
+  },
+  {
+    "model": "positions.position",
+    "pk": 2,
+    "fields": {
+      "name": "Project Manager"
+    }
+  },
+  {
+    "model": "teams.team",
+    "pk": 1,
+    "fields": {
+      "name": "Backend Team",
+      "admins": [
+        1
+      ]
+    }
+  },
+  {
+    "model": "teams.team",
+    "pk": 2,
+    "fields": {
+      "name": "Frontend Team",
+      "admins": [
+        2
+      ]
+    }
+  },
+  {
+    "model": "accounts.worker",
+    "pk": 1,
+    "fields": {
+      "username": "john_doe",
+      "first_name": "John",
+      "last_name": "Doe",
+      "password": "pbkdf2_sha256$1000000$rpcaYIsidszOoFF2eS2A0Z$m4qjOqk2RV5Ia51yrzZXAhFAeJ7GDAKYlaIwDkTco8o=",
+      "is_superuser": true,
+      "is_staff": true,
+      "is_active": true,
+      "position": 1,
+      "team": 1
+    }
+  },
+  {
+    "model": "accounts.worker",
+    "pk": 3,
+    "fields": {
+      "username": "user",
+      "first_name": "User",
+      "last_name": "User",
+      "password": "pbkdf2_sha256$1000000$67DN3nqcXBQNhq5isDTofX$ypyxjiqWWVdkEXvEL4w/3pt/1sFMwGYoUR/ILB5b7n8=",
+      "is_superuser": false,
+      "is_staff": true,
+      "is_active": true,
+      "position": 1,
+      "team": 1
+    }
+  },
+  {
+    "model": "accounts.worker",
+    "pk": 2,
+    "fields": {
+      "username": "jane_smith",
+      "first_name": "Jane",
+      "last_name": "Smith",
+      "password": "pbkdf2_sha256$1000000$mwiFz48JZc2KAtUZpNfF0h$Urchrcg3PAM/hVrW2yV332B8ozFf0lhg8rGotan/vKg=",
+      "is_superuser": false,
+      "is_staff": true,
+      "is_active": true,
+      "position": 2,
+      "team": 2
+    }
+  },
+  {
+    "model": "projects.project",
+    "pk": 1,
+    "fields": {
+      "name": "Website Redesign",
+      "teams": [
+        1,
+        2
+      ]
+    }
+  },
+  {
+    "model": "projects.project",
+    "pk": 2,
+    "fields": {
+      "name": "API Development",
+      "teams": [
+        1
+      ]
+    }
+  },
+  {
+    "model": "tasks.tasktype",
+    "pk": 1,
+    "fields": {
+      "name": "Bug"
+    }
+  },
+  {
+    "model": "tasks.tasktype",
+    "pk": 2,
+    "fields": {
+      "name": "Feature"
+    }
+  },
+  {
+    "model": "tasks.tag",
+    "pk": 1,
+    "fields": {
+      "name": "Urgent"
+    }
+  },
+  {
+    "model": "tasks.tag",
+    "pk": 2,
+    "fields": {
+      "name": "UI"
+    }
+  },
+  {
+    "model": "tasks.task",
+    "pk": 1,
+    "fields": {
+      "name": "Fix login bug",
+      "description": "Users can't log in using Google OAuth.",
+      "deadline": "2025-04-30",
+      "is_completed": false,
+      "priority": "high",
+      "type": 1,
+      "project": 1,
+      "assignees": [
+        1
+      ],
+      "tags": [
+        1
+      ]
+    }
+  },
+  {
+    "model": "tasks.task",
+    "pk": 2,
+    "fields": {
+      "name": "Create landing page",
+      "description": "Design and implement a new landing page.",
+      "deadline": "2025-05-10",
+      "is_completed": false,
+      "priority": "medium",
+      "type": 2,
+      "project": 1,
+      "assignees": [
+        2
+      ],
+      "tags": [
+        2
+      ]
+    }
+  }
+]

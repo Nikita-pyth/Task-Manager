@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="card shadow-sm">
+  <div class="card-header bg-body-secondary">
+    <h2 class="mb-0 h5">{{ worker.first_name }} {{ worker.last_name }}</h2>
+  </div>
+  <div class="card-body">
+    <p><strong>Username:</strong> {{ worker.username }}</p>
+    <p><strong>Email:</strong> {{ worker.email }}</p>
+    <p><strong>Team:</strong>
+      {% if worker.team %}
+        <span class="badge bg-secondary">{{ worker.team.name }}</span>
+      {% else %}
+        <span class="text-muted">None</span>
+      {% endif %}
+    </p>
+    <p><strong>Position:</strong>
+      {% if worker.position %}
+        <span class="badge bg-primary">{{ worker.position.name }}</span>
+      {% else %}
+        <span class="text-muted">None</span>
+      {% endif %}
+    </p>
+
+    <div class="d-flex flex-wrap gap-2 mt-4">
+      <a class="btn btn-outline-primary" href="{% url 'accounts:update' worker.pk %}">Edit</a>
+
+      <form method="post" action="{% url 'accounts:logout' %}">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-outline-warning">Logout</button>
+      </form>
+
+      <a class="btn btn-outline-danger" href="{% url 'accounts:delete' worker.pk %}">Delete</a>
+    </div>
+  </div>
+</div>
+{% endblock %}
